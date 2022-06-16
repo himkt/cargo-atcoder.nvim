@@ -4,12 +4,12 @@ import pynvim
 
 
 @pynvim.plugin
-class Main(object):
-    def __init__(self, vim):
-        self.vim = vim
+class Main:
+    def __init__(self, nvim):
+        self.nvim = nvim
 
     @pynvim.command("CargoAtCoderOpen", sync=True)
     def open_atcoder_problem_page(self):
-        self.vim.command('!open https://atcoder.jp')
-        # nvim = pynvim.attach('socket', os.environ['NVIM_LISTEN_ADDRESS'])
-        # print(nvim.current.buffer)
+        print(type(self.nvim))
+        # self.nvim.command('silent !open https://atcoder.jp')
+        self.nvim.command('!open https://atcoder.jp')
