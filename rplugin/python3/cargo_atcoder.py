@@ -8,8 +8,9 @@ class Main(object):
     def __init__(self, vim):
         self.vim = vim
 
-    @pynvim.command("Open", sync=True)
-    def open(self):
+    @pynvim.command("CargoAtCoderOpen", sync=True)
+    def open_atcoder_problem_page(self):
         self.vim.command('echo "hello from DoItPython"')
-        nvim = pynvim.attach('socket', os.environ['NVIM_LISTEN_ADDRESS'])
-        print(nvim.current.buffer)
+        print("hello")
+        # nvim = pynvim.attach('socket', os.environ['NVIM_LISTEN_ADDRESS'])
+        # print(nvim.current.buffer)
