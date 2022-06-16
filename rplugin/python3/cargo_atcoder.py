@@ -18,9 +18,13 @@ class AtCoderTaskPageParser(html.parser.HTMLParser):
         self.href: Optional[str] = None
         self.links = {}
 
-    def handle_starttag(self, tag: str, attrs: List[Tuple[str, str]]):
+    def handle_starttag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]):
         if tag == "td":
-            ret = sum(1 for k, v in attrs if k == "class" and "text-center" in v) > 0
+            ret = sum(
+                1 for k, v in attrs
+                if k == "class" and isinstance(v, str) and "text-center" in v
+            ) > 0
+
             if ret:
                 self.state = True
 
