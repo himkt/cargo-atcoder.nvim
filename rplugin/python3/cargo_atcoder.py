@@ -10,7 +10,6 @@ class Main(object):
 
     @pynvim.command("CargoAtCoderOpen", sync=True)
     def open_atcoder_problem_page(self):
-        self.vim.command('echo "hello from DoItPython"')
-        print("hello")
+        self.vim.command('!open https://atcoder.jp')
         # nvim = pynvim.attach('socket', os.environ['NVIM_LISTEN_ADDRESS'])
         # print(nvim.current.buffer)
