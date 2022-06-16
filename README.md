@@ -1,1 +1,1 @@
-# cargo-atcoder-neovim
+# cargo-atcoder.nvim
