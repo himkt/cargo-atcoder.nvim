@@ -1,5 +1,21 @@
 # cargo-atcoder.nvim
 
+### Install
+
+```vim
+call plug#begin('~/.config/nvim/plugged')
+  Plug 'himkt/cargo-atcoder.nvim'
+call plug#end()
+```
+
+### Usage
+
+- `:CargoAtcoderOpen` to open the problem page
+- `:CargoAtcoderRun` to run the code (actually it is not `cargo-atcoder` feature)
+- `:CargoAtcoderStatus` to view the stats
+- `:CargoAtcoderSubmit` to make a submission
+- `:CargoAtcoderSubmitForce` to make a submission even if the program is wrong on samples
+- `:CargoAtcoderTest` to run the code on samples
 
 ### Developing
 
