@@ -56,17 +56,21 @@ class Main:
         self.base_url = "https://atcoder.jp"
         self.parser = AtCoderTaskPageParser()
 
+    def get_current_file(self) -> Optional[str]:
+        current_path_to_file: str = self.nvim.command_output("echo expand('%')")  # type: ignore
+        if current_path_to_file == "":
+            return None
+        return Path(current_path_to_file).stem
+
+    def get_working_dir(self) -> str:
+        return Path(os.getcwd()).name
+
     @pynvim.command("CargoAtCoderOpen", sync=True)
-    def open_atcoder_problem_page(self):
-        current_file_path_str: str = self.nvim.command_output('echo expand("%")')  # type: ignore
-        if current_file_path_str == "":
+    def open_atcoder_problem_page(self) -> None:
+        working_dir_name = self.get_working_dir()
+        problem_name = self.get_current_file()
+        if problem_name is None:
             return
-
-        current_file_path = Path(current_file_path_str)
-        current_file_name = current_file_path.stem
-
-        working_dir_path = Path(os.getcwd())
-        working_dir_name = working_dir_path.name
 
         task_url = f"{self.base_url}/contests/{working_dir_name}/tasks"
         request = urllib.request.Request(task_url)
@@ -76,11 +80,39 @@ class Main:
             with urllib.request.urlopen(request) as response:
                 body = response.read().decode("utf-8")
                 self.parser.feed(body)
-                href = self.parser.links[current_file_name.upper()]
+                href = self.parser.links[problem_name.upper()]
                 problem_url = f"{self.base_url}/{href}"
 
         # NOTE Fallback (typically enters when 404.
         except urllib.error.HTTPError:
-            problem_url = f"{self.base_url}/contests/{working_dir_name}/tasks/{working_dir_name}_{current_file_name}"
+            problem_url = (
+                f"{self.base_url}/contests"
+                f"/{working_dir_name}/tasks"
+                f"/{working_dir_name}_{problem_name}"
+            )
 
         self.nvim.command(f"silent !open {problem_url}")
+
+    @pynvim.command("CargoAtcoderStatus", sync=True)
+    def open_atcoder_status_page(self) -> None:
+        self.nvim.command("split | term cargo atcoder status")
+
+    @pynvim.command("CargoAtcoderTest", sync=True)
+    def test_atcoder_problem(self) -> None:
+        problem_name = self.get_current_file()
+        self.nvim.command(f"split | term cargo atcoder test {problem_name}")
+
+    @pynvim.command("CargoAtcoderSubmit", sync=True)
+    def submit_atcoder_problem(self) -> None:
+        problem_name = self.get_current_file()
+        self.nvim.command(f"split | term cargo atcoder submit {problem_name}")
+
+    @pynvim.command("CargoAtcoderSubmitForce", sync=True)
+    def force_submit_atcoder_problem(self) -> None:
+        problem_name = self.get_current_file()
+        self.nvim.command(f"split | term cargo atcoder submit --force {problem_name}")
+
+    @pynvim.command("CargoAtcoderRun", sync=True)
+    def run_atcoder_problem(self) -> None:
+        problem_name = self.get_current_file()
+        self.nvim.command(f"split | term cargo run --bin {problem_name}")
