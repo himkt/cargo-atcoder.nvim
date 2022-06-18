@@ -111,8 +111,3 @@ class Main:
     def force_submit_atcoder_problem(self) -> None:
         problem_name = self.get_current_file()
         self.nvim.command(f"split | term cargo atcoder submit --force {problem_name}")
-
-    @pynvim.command("CargoAtcoderRun", sync=True)
-    def run_atcoder_problem(self) -> None:
-        problem_name = self.get_current_file()
-        self.nvim.command(f"split | term cargo run --bin {problem_name}")
