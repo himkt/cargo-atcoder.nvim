@@ -10,6 +10,8 @@ import pynvim.api
 
 
 class AtCoderTaskPageParser(html.parser.HTMLParser):
+    """HTML parser for AtCoder problem list page.
+    """
 
     def __init__(self, *, convert_charrefs=True):
         super().__init__(convert_charrefs=convert_charrefs)
@@ -18,14 +20,13 @@ class AtCoderTaskPageParser(html.parser.HTMLParser):
         self.href: Optional[str] = None
         self.links = {}
 
-    def handle_starttag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]):
+    def handle_starttag(
+        self,
+        tag: str,
+        attrs: List[Tuple[str, Optional[str]]],
+    ):
         if tag == "td":
-            ret = sum(
-                1 for k, v in attrs
-                if k == "class" and isinstance(v, str) and "text-center" in v
-            ) > 0
-
-            if ret:
+            if self.is_target_element(attrs):
                 self.state = True
 
         if tag == "a":
@@ -47,6 +48,10 @@ class AtCoderTaskPageParser(html.parser.HTMLParser):
 
         if tag == "a":
             self.target = False
+
+    @staticmethod
+    def is_target_element(attrs: List[Tuple[str, Optional[str]]]) -> bool:
+        return any(k == "class" and isinstance(v, str) and "text-center" in v for k, v in attrs)
 
 
 @pynvim.plugin
@@ -93,21 +98,21 @@ class Main:
 
         self.nvim.command(f"silent !open {problem_url}")
 
-    @pynvim.command("CargoAtcoderStatus", sync=True)
+    @pynvim.command("CargoAtCoderStatus", sync=True)
     def open_atcoder_status_page(self) -> None:
         self.nvim.command("split | term cargo atcoder status")
 
-    @pynvim.command("CargoAtcoderTest", sync=True)
+    @pynvim.command("CargoAtCoderTest", sync=True)
     def test_atcoder_problem(self) -> None:
         problem_name = self.get_current_file()
         self.nvim.command(f"split | term cargo atcoder test {problem_name}")
 
-    @pynvim.command("CargoAtcoderSubmit", sync=True)
+    @pynvim.command("CargoAtCoderSubmit", sync=True)
     def submit_atcoder_problem(self) -> None:
         problem_name = self.get_current_file()
         self.nvim.command(f"split | term cargo atcoder submit {problem_name}")
 
-    @pynvim.command("CargoAtcoderSubmitForce", sync=True)
+    @pynvim.command("CargoAtCoderSubmitForce", sync=True)
     def force_submit_atcoder_problem(self) -> None:
         problem_name = self.get_current_file()
         self.nvim.command(f"split | term cargo atcoder submit --force {problem_name}")
